@@ -13,16 +13,17 @@
     }
 
     body {
-  background:
-    linear-gradient(rgba(44, 32, 22, 0.82), rgba(44, 32, 22, 0.82)),
-    url("temple-bg.jpg") center top no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  color: #f8f2e4;
-  padding: 24px 16px;
-  max-width: 600px;
-  margin: 0 auto;
-}
+      background:
+        linear-gradient(rgba(44, 32, 22, 0.82), rgba(44, 32, 22, 0.82)),
+        url("temple-bg.jpg") center top no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #f8f2e4;
+      padding: 24px 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
     h1 {
       text-align: center;
       margin-bottom: 24px;
@@ -40,6 +41,13 @@
     /* 抽籤區塊 */
     .draw-block {
       text-align: center;
+    }
+
+    .draw-tip {
+      color: #e6d2a8;
+      font-size: 16px;
+      margin: 10px 0 18px;
+      line-height: 1.6;
     }
 
     .draw-btn {
@@ -162,6 +170,7 @@
 
 <div class="block draw-block">
   <h3>抽取城隍靈籤</h3>
+  <p class="draw-tip">先於心中默念問題，再點擊抽籤</p>
   <button class="draw-btn" id="drawBtn">抽籤詩</button>
   <button class="reset-btn hide" id="resetBtn">重新抽籤</button>
 
@@ -173,15 +182,11 @@
 </div>
 
 <div class="footer-area">
-  <a href="PUT_YOUR_LINE_URL_HERE" target="_blank" class="line-btn">💬 官方LINE｜問更多問題</a>
-  <a href="PUT_YOUR_DONATE_URL_HERE" target="_blank" class="donate-btn">💰 隨喜功德｜做善事問事更靈準</a>
+  <a href="https://lin.ee/zGkD3el" target="_blank" class="line-btn">💬 官方LINE｜問更多問題</a>
+  <a href="https://s.shopee.tw/8fRThlXng1" target="_blank" class="donate-btn">💰 隨喜功德｜做善事問事更靈準</a>
 </div>
 
 <script>
-// ========== 設定區 ==========
-const LINE_URL = "https://lin.ee/zGkD3el";     // 替換成你的LINE加入連結
-const DONATE_URL = "https://s.shopee.tw/8fRThlXng1"; // 替換成街口收款連結
-
 // 60支城隍靈籤
 const lotList = [
   {num:"第1籤",text:"春來雷震百花開\n萬物光華照上台\n謀望求財皆遂意\n災消禍散福來陪"},
@@ -272,10 +277,6 @@ resetBtn.onclick = function () {
   resetBtn.classList.add("hide");
   drawBtn.classList.remove("hide");
 };
-
-// 替換連結
-document.querySelector(`.line-btn`).href = LINE_URL;
-document.querySelector(`.donate-btn`).href = DONATE_URL;
 </script>
 
 </body>
