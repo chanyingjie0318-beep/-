@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>城隍六十靈籤</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Noto Sans TC", sans-serif;
+    }
+
+    body {
+      background: #2c2016;
+      color: #f8f2e4;
+      padding: 24px 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 26px;
+      color: #ffdd99;
+    }
+
+    .block {
+      background: #443424;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* 抽籤區塊 */
+    .draw-block {
+      text-align: center;
+    }
+
+    .draw-btn {
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #b88628;
+      color: #fff;
+      margin: 10px;
+    }
+
+    .draw-btn:hover {
+      background: #d49c2f;
+    }
+
+    .reset-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #6b5344;
+      color: #fff;
+      margin: 10px;
+    }
+
+    .reset-btn:hover {
+      background: #8b6b54;
+    }
+
+    /* 籤紙樣式，真實紙張感 */
+    .lottery-paper {
+      background: #fff9e8;
+      color: #222;
+      padding: 28px 20px;
+      border: 2px solid #946b2d;
+      border-radius: 4px;
+      margin-top: 20px;
+      box-shadow: 0 0 14px #0007;
+      position: relative;
+    }
+
+    .lottery-paper::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      border: 1px dashed #c9a76b;
+      pointer-events: none;
+    }
+
+    .lottery-num {
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 12px;
+      color: #8b2323;
+    }
+
+    .lottery-title {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #5a3e1b;
+    }
+
+    .lottery-poem {
+      white-space: pre-line;
+      line-height: 1.8;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    /* 底部連結區 */
+    .footer-area {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .footer-area a {
+      display: block;
+      padding: 14px;
+      margin: 10px auto;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      max-width: 320px;
+      font-size: 17px;
+      transition: background 0.2s;
+    }
+
+    .line-btn {
+      background: #25c455;
+    }
+
+    .line-btn:hover {
+      background: #20a84a;
+    }
+
+    .donate-btn {
+      background: #c0392b;
+    }
+
+    .donate-btn:hover {
+      background: #a93226;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🏮 城隍六十靈籤</h1>
+
+<div class="block draw-block">
+  <h3>抽取城隍靈籤</h3>
+  <button class="draw-btn" id="drawBtn">抽籤詩</button>
+  <button class="reset-btn hide" id="resetBtn">重新抽籤</button>
+
+  <div class="lottery-paper hide" id="lotteryWrap">
+    <div class="lottery-num" id="lotNum"></div>
+    <div class="lottery-title">城隍靈籤</div>
+    <div class="lottery-poem" id="lotText"></div>
+  </div>
+</div>
+
+<div class="footer-area">
+  <a href="PUT_YOUR_LINE_URL_HERE" target="_blank" class="line-btn">💬 官方LINE｜問更多問題</a>
+  <a href="PUT_YOUR_DONATE_URL_HERE" target="_blank" class="donate-btn">💰 隨喜功德｜做善事問事更靈準</a>
+</div>
+
+<script>
+// ========== 設定區 ==========
+const LINE_URL = "https://lin.ee/zGkD3el";     // 替換成你的LINE加入連結
+const DONATE_URL = "https://s.shopee.tw/8fRThlXng1"; // 替換成街口收款連結
+
+// 60支城隍靈籤
+const lotList = [
+  {num:"第1籤",text:"春來雷震百花開\n萬物光華照上台\n謀望求財皆遂意\n災消禍散福來陪"},
+  {num:"第2籤",text:"雲開月出正分明\n不須進退問前程\n婚姻財祿皆如意\n若得此籤萬事成"},
+  {num:"第3籤",text:"風吹雲霧散青天\n月滿庭前照必然\n好事重重多吉利\n求財謀望喜綿綿"},
+  {num:"第4籤",text:"久困窮途未得時\n今朝得祿始相宜\n從今更改門庭吉\n百事亨通福自隨"},
+  {num:"第5籤",text:"一輪明月照中天\n萬里清光萬事全\n男女相逢多喜慶\n求財謀望福綿綿"},
+  {num:"第6籤",text:"石中藏玉有誰知\n一旦光輝顯大奇\n若得貴人相引薦\n功名財祿兩相宜"},
+  {num:"第7籤",text:"雲霧遮月暗重重\n求事謀望未得通\n且待雲開明月現\n此時方可遇春風"},
+  {num:"第8籤",text:"平地起波風浪驚\n求謀作事未宜行\n安守舊業方為吉\n切莫貪求惹禍生"},
+  {num:"第9籤",text:"花開遭雨打風摧\n萬事謀求未得宜\n守舊安身無禍患\n貪求進取必生危"},
+  {num:"第10籤",text:"鴻雁孤飛落淺灘\n往來求事多阻難\n守分安命隨時過\n切莫貪圖惹禍端"},
+  {num:"第11籤",text:"寶鏡蒙塵未得光\n千般謀望事難彰\n若逢明鏡重磨洗\n萬事從新大吉昌"},
+  {num:"第12籤",text:"困龍淺灘未得時\n靜守待雲起天池\n若得風雲相際會\n此時變化上天池"},
+  {num:"第13籤",text:"春風萬里送歸人\n好事相逢喜氣新\n求財謀望皆如意\n出入平安福祿臻"},
+  {num:"第14籤",text:"滿園桃李正春華\n出入相逢喜事加\n求財謀望多如意\n禍去福來喜到家"},
+  {num:"第15籤",text:"明月清風夜正長\n百花開處滿庭香\n求財謀望皆如意\n百事從心大吉昌"},
+  {num:"第16籤",text:"魚躍春江水暖時\n謀求進取正相宜\n貴人相助多吉利\n財祿功名兩得宜"},
+  {num:"第17籤",text:"雲開霧散見青天\n萬事從新福祿綿\n求財謀望皆稱意\n災消禍散喜安然"},
+  {num:"第18籤",text:"花逢春雨滿園開\n好事重重入戶來\n求望謀為多遂意\n貴人接引上春台"},
+  {num:"第19籤",text:"寒潭魚少水淒清\n謀望求財事不成\n守舊安身方得吉\n妄求進取必遭傾"},
+  {num:"第20籤",text:"風雨連天鎖翠樓\n千般謀望事難酬\n且宜靜守無他事\n莫向東西向外求"},
+  {num:"第21籤",text:"枯木逢春再發芽\n舊時門戶重新華\n從今謀望皆如意\n禍散災消福到家"},
+  {num:"第22籤",text:"寶劍塵埋久未光\n一朝磨洗顯鋒芒\n貴人提攜多吉利\n財祿功名大吉昌"},
+  {num:"第23籤",text:"一輪明月出雲霄\n萬里清光萬事饒\n求財謀望多如意\n出入平安福祿高"},
+  {num:"第24籤",text:"春風送暖百花榮\n好事相逢喜氣生\n謀望求財皆遂意\n貴人相助福來成"},
+  {num:"第25籤",text:"雲山霧鎖路難通\n謀望求財事未逢\n且待時來天運轉\n此時方得見光榮"},
+  {num:"第26籤",text:"淺灘龍困少風雲\n萬事謀求未得伸\n靜守家中無禍患\n妄求向外必遭屯"},
+  {num:"第27籤",text:"花開雨打又風吹\n謀望千般事不宜\n守舊安分無災害\n貪圖進取有憂危"},
+  {num:"第28籤",text:"孤雁飛來過遠灘\n謀為求事有多難\n安身守己隨緣過\n莫惹閒非禍患攤"},
+  {num:"第29籤",text:"鏡內花開豈是真\n水中明月枉勞神\n千般謀望皆虛幻\n守舊安身免禍侵"},
+  {num:"第30籤",text:"薄霧輕雲掩月明\n謀求作事未通亨\n待得雲開星月朗\n此時方得事光榮"},
+  {num:"第31籤",text:"時來運轉福門開\n萬事謀求稱意懷\n貴人相逢多吉慶\n財祿源源入戶來"},
+  {num:"第32籤",text:"春風得意馬蹄輕\n出入相逢喜事生\n求望謀為皆遂願\n滿門吉慶福綿綿"},
+  {num:"第33籤",text:"月到中天萬里明\n清光普照福來臨\n求財謀望皆如意\n禍散災消百事寧"},
+  {num:"第34籤",text:"花開滿院遇春風\n好事重重喜氣濃\n貴人提攜多吉利\n財祿功名兩得通"},
+  {num:"第35籤",text:"魚躍龍門喜氣新\n從今脫卻舊時塵\n謀求進取多如意\n祿位財帛日日增"},
+  {num:"第36籤",text:"雲開霧散日重光\n萬事從新大吉昌\n求財謀望皆稱遂\n滿門吉慶福綿長"},
+  {num:"第37籤",text:"風浪波濤水面生\n求謀向外事難成\n安守家園方為吉\n切莫貪求惹禍情"},
+  {num:"第38籤",text:"花遭霜雪減光輝\n萬事謀求未得宜\n守舊靜心無災害\n妄求進取有憂危"},
+  {num:"第39籤",text:"霧鎖青山路不通\n千般謀望事難逢\n待得天開雲霧散\n方知否極又還通"},
+  {num:"第40籤",text:"困鳥籠中未得飛\n謀求進取事多違\n安身守分隨緣過\n莫惹閒非禍自歸"},
+  {num:"第41籤",text:"枯木逢春葉再新\n從今門戶轉光榮\n求財謀望多如意\n禍散災消福祿臻"},
+  {num:"第42籤",text:"寶鏡塵埋久不明\n一朝磨洗復光瑩\n貴人相引多吉利\n萬事亨通福祿生"},
+  {num:"第43籤",text:"春風送福入門來\n好事相逢喜氣開\n謀望求財皆遂意\n滿門吉慶樂無涯"},
+  {num:"第44籤",text:"月滿中天照萬家\n清光處處顯光華\n求財謀望多如意\n出入平安福祿加"},
+  {num:"第45籤",text:"雲遮明月暗朦朧\n謀望求財事未通\n且待時來天運轉\n雲開月現福無窮"},
+  {num:"第46籤",text:"淺水魚龍未得遊\n千般謀望事多憂\n守舊安身無災患\n貪求向外必遭愁"},
+  {num:"第47籤",text:"狂風驟雨打花枝\n萬事謀求未合宜\n靜守家園為上策\n妄求進取有凶危"},
+  {num:"第48籤",text:"孤舟渡海浪滔滔\n求事謀望苦勞勞\n守分安命隨時過\n免教災禍來相遭"},
+  {num:"第49籤",text:"鏡花水月總虛浮\n謀望千般枉費求\n安分守己無災害\n貪圖妄想惹憂愁"},
+  {num:"第50籤",text:"黑雲籠日少光輝\n萬事謀求多阻違\n等待雲開天日朗\n此時方得顯神威"},
+  {num:"第51籤",text:"時運亨通百事昌\n貴人相助福綿長\n求財謀望皆如意\n禍散災消喜滿堂"},
+  {num:"第52籤",text:"春風化雨潔花開\n好事重重入戶來\n謀望求財多遂意\n功名財祿兩相諧"},
+  {num:"第53籤",text:"皓月當空萬里輝\n千般謀望盡堪為\n出入平安多吉慶\n財祿源源福祿隨"},
+  {num:"第54籤",text:"花逢暖日滿園紅\n謀望求財事事通\n貴人相逢多吉慶\n滿門喜氣樂無窮"},
+  {num:"第55籤",text:"魚化龍騰上碧霄\n從今脫卻舊塵囂\n謀求進取皆如意\n祿位財名步步高"},
+  {num:"第56籤",text:"雲開見日顯光明\n否極泰來百事成\n求財謀望皆稱遂\n災消禍散福來迎"},
+  {num:"第57籤",text:"浪起江湖風雨狂\n千般謀望莫輕忙\n安守舊業方為吉\n貪進招災惹禍殃"},
+  {num:"第58籤",text:"霜雪侵凌花損傷\n謀求作事少輝光\n守舊靜心無災害\n妄取貪求有禍殃"},
+  {num:"第59籤",text:"霧鎖重山去路迷\n謀望求財事不齊\n待得時來天運轉\n撥雲見日始相宜"},
+  {num:"第60籤",text:"籠中禽鳥不能飛\n萬事謀求願望違\n守分安命隨緣度\n莫教災禍緊相隨"}
+];
+
+// 頁面元素
+const drawBtn = document.getElementById("drawBtn");
+const resetBtn = document.getElementById("resetBtn");
+const lotteryWrap = document.getElementById("lotteryWrap");
+const lotNumEl = document.getElementById("lotNum");
+const lotTextEl = document.getElementById("lotText");
+
+// 抽籤
+drawBtn.onclick = function () {
+  const r = Math.floor(Math.random() * lotList.length);
+  const pick = lotList[r];
+
+  lotNumEl.innerText = pick.num;
+  lotTextEl.innerText = pick.text;
+
+  lotteryWrap.classList.remove("hide");
+  resetBtn.classList.remove("hide");
+  drawBtn.classList.add("hide");
+};
+
+// 重新抽籤
+resetBtn.onclick = function () {
+  lotteryWrap.classList.add("hide");
+  resetBtn.classList.add("hide");
+  drawBtn.classList.remove("hide");
+};
+
+// 替換連結
+document.querySelector(`.line-btn`).href = LINE_URL;
+document.querySelector(`.donate-btn`).href = DONATE_URL;
+</script>
+
+</body>
+</html>
