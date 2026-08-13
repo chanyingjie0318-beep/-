@@ -1,133 +1,471 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>城隍六十靈籤</title>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft JhengHei",sans-serif}
-        body{
-            background:url('https://picsum.photos/id/1035/1920/1080') center/cover no-repeat fixed;
-            min-height:100vh;
-            padding:20px;
-        }
-        .mask{
-            position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:0;
-        }
-        .wrap{
-            position:relative;z-index:1;max-width:900px;margin:0 auto;
-        }
-        h1{
-            text-align:center;color:#fff;font-size:32px;margin-bottom:20px;
-            text-shadow:2px 2px 4px #000;
-        }
-        .card{
-            background:rgba(90,60,30,0.85);
-            border-radius:16px;padding:30px;color:#fff;
-            box-shadow:0 8px 32px rgba(0,0,0,0.3);
-        }
-        .tip-text{text-align:center;font-size:18px;margin-bottom:20px;line-height:1.6}
-        .jiao-box{
-            background:rgba(120,80,40,0.6);
-            border-radius:12px;padding:20px;text-align:center;margin-bottom:20px;font-size:20px;
-        }
-        .btn{
-            display:block;width:220px;margin:12px auto;padding:14px 0;
-            border:none;border-radius:10px;font-size:18px;cursor:pointer;transition:0.2s;
-        }
-        .btn-jiao{background:#d4a048;color:#222}
-        .btn-jiao:hover{background:#e0b058}
-        .btn-lot{background:#966c3e;color:#fff}
-        .btn-lot:disabled{opacity:0.4;cursor:not-allowed}
-        .divider{margin:25px 0;border-top:1px dashed #999}
-        .record-tit{text-align:center;font-size:17px;margin-bottom:10px}
-        .record-list{max-height:160px;overflow:auto;font-size:15px;line-height:1.7}
-        .bottom-btns{margin-top:25px;display:flex;flex-direction:column;gap:12px}
-        .btn-line{background:#28b860;color:#fff}
-        .btn-donate{background:#c83c3c;color:#fff}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>城隍六十靈籤</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Noto Sans TC", sans-serif;
+    }
+
+    body {
+      background:
+        linear-gradient(rgba(44, 32, 22, 0.72), rgba(44, 32, 22, 0.72)),
+        url("temple-bg.jpg.png") center no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      color: #f8f2e4;
+      padding: 24px 16px;
+      max-width: 700px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 28px;
+      color: #ffdd99;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      animation: lanternBreath 3s ease-in-out infinite;
+    }
+    @keyframes lanternBreath {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.9; }
+    }
+
+    .block {
+      background: rgba(68, 52, 36, 0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 24px 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    /* 抽籤區塊 */
+    .draw-block {
+      text-align: center;
+    }
+
+    .draw-tip {
+      color: #e6d2a8;
+      font-size: 16px;
+      margin: 12px 0 22px;
+      line-height: 1.6;
+    }
+
+    .draw-btn {
+      padding: 14px 32px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #b88628;
+      color: #fff;
+      margin: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    .draw-btn:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+    .draw-btn:disabled{background:#886a39;cursor:not-allowed;transform:none}
+
+    .draw-btn:hover {
+      background: #d49c2f;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.28);
+    }
+
+    .reset-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #6b5344;
+      color: #fff;
+      margin: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+    .reset-btn:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+    .reset-btn:hover {
+      background: #8b6b54;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.28);
+    }
+
+    /* 吉凶標籤通用配色 */
+    .luck-tag{
+      display:inline-block;
+      padding:5px 14px;
+      border-radius:20px;
+      font-size:15px;
+      margin-bottom:12px;
+      font-weight:600;
+    }
+    .tag-shangshang{background:#f8d060;color:#704200}
+    .tag-shangji{background:#9ed873;color:#245010}
+    .tag-zhongping{background:#94b8d8;color:#1a344b}
+    .tag-xiaxia{background:#d88989;color:#571212}
+
+    /* 籤紙整體排版優化 */
+    .lottery-paper {
+      background: #fff9e8;
+      color: #222;
+      padding: 32px 24px;
+      border: 2px solid #946b2d;
+      border-radius: 4px;
+      margin-top: 20px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.08);
+      position: relative;
+      animation: paperFade 0.4s ease-out;
+    }
+    @keyframes paperFade {
+      from { opacity:0; transform: translateY(10px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+
+    .lottery-paper::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      border: 1px dashed #c9a76b;
+      pointer-events: none;
+    }
+
+    /* 籤號：第幾籤 */
+    .lottery-num {
+      font-size: 30px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 6px;
+      color: #8b2323;
+      letter-spacing: 2px;
+    }
+
+    /* 籤詩標題 */
+    .lottery-title {
+      text-align: center;
+      font-size: 17px;
+      margin-bottom: 18px;
+      color: #5a3e1b;
+      letter-spacing: 1px;
+    }
+
+    /* 傳統豎排籤詩 */
+    .lottery-poem {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      margin: 30px auto 10px;
+      padding: 0 12px;
+      height: 260px;
+      letter-spacing: 8px;
+      font-size: 18px;
+      line-height: 2.2;
+      color: #3a2615;
+      font-weight: 500;
+      border-right: 2px solid #d4b888;
+      border-left: 2px solid #d4b888;
+      max-width: 320px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    /* 歷史紀錄區域 */
+    .history-area {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.25);
+    }
+    .history-title {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #e6d2a8;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-item {
+      font-size: 14px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      margin: 0;
+      color: #f8f2e4;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .history-item:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+    .history-item .luck {
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+
+    /* 底部連結區 */
+    .footer-area {
+      margin-top: 40px;
+      text-align: center;
+    }
+    .footer-area a {
+      display: block;
+      padding: 15px;
+      margin: 12px auto;
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      max-width: 360px;
+      font-size: 17px;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .footer-area a:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+    .line-btn {
+      background: rgba(37, 196, 85, 0.85);
+    }
+    .line-btn:hover {
+      background: rgba(32, 168, 74, 0.95);
+      transform: translateY(-2px);
+    }
+    .donate-btn {
+      background: rgba(192, 57, 43, 0.85);
+    }
+    .donate-btn:hover {
+      background: rgba(169, 50, 38, 0.95);
+      transform: translateY(-2px);
+    }
+
+    /* 手機小螢幕适配 */
+    @media (max-width: 480px) {
+      .lottery-poem {
+        height: 240px;
+        font-size: 17px;
+        letter-spacing: 7px;
+      }
+      .lottery-num {
+        font-size: 28px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="mask"></div>
-<div class="wrap">
-    <h1>🏮 城隍六十靈籤</h1>
-    <div class="card">
-        <div class="tip-text">抽取城隍靈籤<br>誠心淨手，默念心中所求之事，擲筊請示神明後方可搖籤</div>
-        <div class="jiao-box" id="jiaoShow">擲聖筊（累計 0/3 聖筊）</div>
 
-        <button class="btn btn-jiao" id="btnJiao">擲筊</button>
-        <button class="btn btn-lot" id="btnLot" disabled>搖籤求籤詩</button>
+<h1>🏮 城隍六十靈籤</h1>
 
-        <div class="divider"></div>
-        <div class="record-tit">📜 最近抽籤紀錄</div>
-        <div class="record-list" id="recordList"></div>
-    </div>
+<div class="block draw-block">
+  <h3>抽取城隍靈籤</h3>
+  <p class="draw-tip">先於心中默念問題，再點擊抽籤</p>
+  <button class="draw-btn" id="drawBtn">抽籤詩</button>
+  <button class="reset-btn hide" id="resetBtn">重新抽籤</button>
 
-    <div class="bottom-btns">
-        <button class="btn btn-line">💬 線上問事 | 官方LINE</button>
-        <button class="btn btn-donate">🕯️ 隨喜功德 捐棺積陰德</button>
-    </div>
+  <div class="lottery-paper hide" id="lotteryWrap">
+    <div class="lottery-num" id="lotNum"></div>
+    <div id="luckTag"></div>
+    <div class="lottery-title">城隍靈籤</div>
+    <div class="lottery-poem" id="lotText"></div>
+  </div>
+
+  <div class="history-area" id="historyBox">
+    <div class="history-title">📜 最近抽籤紀錄</div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<div class="footer-area">
+  <a href="https://lin.ee/zGkD3el" target="_blank" class="line-btn">💬 官方LINE｜問更多問題</a>
+  <a href="https://s.shopee.tw/8fRThlXng1" target="_blank" class="donate-btn">💰 隨喜功德｜做善事問事更靈準</a>
 </div>
 
 <script>
-// 掷筊核心变量
-let saintCount = 0;
-const needTotal = 3;
-const jiaoShow = document.getElementById('jiaoShow');
-const btnJiao = document.getElementById('btnJiao');
-const btnLot = document.getElementById('btnLot');
-const recordList = document.getElementById('recordList');
-let recordArr = JSON.parse(localStorage.getItem('lotRecord')||'[]');
-
-// 渲染抽签记录
-function renderRecord(){
-    recordList.innerHTML = recordArr.map(item=>`<div>${item}</div>`).join('');
-}
-renderRecord();
-
-// 掷筊逻辑
-btnJiao.addEventListener('click',function(){
-    const rand = Math.random();
-    let resText = '';
-    // 概率：圣筊35%、阴筊35%、笑筊30%
-    if(rand < 0.35){
-        saintCount++;
-        resText = `本次：✅聖筊｜累計 ${saintCount}/${needTotal} 聖筊`;
-    }else if(rand < 0.7){
-        resText = `本次：❌陰筊｜累計 ${saintCount}/${needTotal} 聖筊`;
-    }else{
-        resText = `本次：💫笑筊｜累計 ${saintCount}/${needTotal} 聖筊`;
-    }
-    jiaoShow.innerText = resText;
-
-    // 满3次解锁摇签
-    if(saintCount >= needTotal){
-        btnLot.disabled = false;
-    }
-});
-
-// 六十灵签简易签库（示例可自行扩充）
-const lotLib = [
-    "第一籤 上上 枯木逢春發新芽",
-    "第二籤 中平 風平浪靜穩行舟",
-    "第三籤 上吉 貴人相助事事成"
+// 60支城隍靈籤+吉凶分類
+const lotList = [
+  {num:"第1籤",text:"春來雷震百花開\n萬物光華照上台\n謀望求財皆遂意\n災消禍散福來陪",luck:"上上"},
+  {num:"第2籤",text:"雲開月出正分明\n不須進退問前程\n婚姻財祿皆如意\n若得此籤萬事成",luck:"上上"},
+  {num:"第3籤",text:"風吹雲霧散青天\n月滿庭前照必然\n好事重重多吉利\n求財謀望喜綿綿",luck:"上吉"},
+  {num:"第4籤",text:"久困窮途未得時\n今朝得祿始相宜\n從今更改門庭吉\n百事亨通福自隨",luck:"上吉"},
+  {num:"第5籤",text:"一輪明月照中天\n萬里清光萬事全\n男女相逢多喜慶\n求財謀望福綿綿",luck:"上上"},
+  {num:"第6籤",text:"石中藏玉有誰知\n一旦光輝顯大奇\n若得貴人相引薦\n功名財祿兩相宜",luck:"上吉"},
+  {num:"第7籤",text:"雲霧遮月暗重重\n求事謀望未得通\n且待雲開明月現\n此時方可遇春風",luck:"中平"},
+  {num:"第8籤",text:"平地起波風浪驚\n求謀作事未宜行\n安守舊業方為吉\n切莫貪求惹禍生",luck:"中平"},
+  {num:"第9籤",text:"花開遭雨打風摧\n萬事謀求未得宜\n守舊安身無禍患\n貪求進取必生危",luck:"下下"},
+  {num:"第10籤",text:"鴻雁孤飛落淺灘\n往來求事多阻難\n守分安命隨時過\n切莫貪圖惹禍端",luck:"下下"},
+  {num:"第11籤",text:"寶鏡蒙塵未得光\n千般謀望事難彰\n若逢明鏡重磨洗\n萬事從新大吉昌",luck:"中平"},
+  {num:"第12籤",text:"困龍淺灘未得時\n靜守待雲起天池\n若得風雲相際會\n此時變化上天池",luck:"中平"},
+  {num:"第13籤",text:"春風萬里送歸人\n好事相逢喜氣新\n求財謀望皆如意\n出入平安福祿臻",luck:"上吉"},
+  {num:"第14籤",text:"滿園桃李正春華\n出入相逢喜事加\n求財謀望多如意\n禍去福來喜到家",luck:"上吉"},
+  {num:"第15籤",text:"明月清風夜正長\n百花開處滿庭香\n求財謀望皆如意\n百事從心大吉昌",luck:"上上"},
+  {num:"第16籤",text:"魚躍春江水暖時\n謀求進取正相宜\n貴人相助多吉利\n財祿功名兩得宜",luck:"上吉"},
+  {num:"第17籤",text:"雲開霧散見青天\n萬事從新福祿綿\n求財謀望皆稱意\n災消禍散喜安然",luck:"上吉"},
+  {num:"第18籤",text:"花逢春雨滿園開\n好事重重入戶來\n求望謀為多遂意\n貴人接引上春台",luck:"上吉"},
+  {num:"第19籤",text:"寒潭魚少水淒清\n謀望求財事不成\n守舊安身方得吉\n妄求進取必遭傾",luck:"下下"},
+  {num:"第20籤",text:"風雨連天鎖翠樓\n千般謀望事難酬\n且宜靜守無他事\n莫向東西向外求",luck:"下下"},
+  {num:"第21籤",text:"枯木逢春再發芽\n舊時門戶重新華\n從今謀望皆如意\n禍散災消福到家",luck:"上吉"},
+  {num:"第22籤",text:"寶劍塵埋久未光\n一朝磨洗顯鋒芒\n貴人提攜多吉利\n財祿功名大吉昌",luck:"上吉"},
+  {num:"第23籤",text:"一輪明月出雲霄\n萬里清光萬事饒\n求財謀望多如意\n出入平安福祿高",luck:"上上"},
+  {num:"第24籤",text:"春風送暖百花榮\n好事相逢喜氣生\n謀望求財皆遂意\n貴人相助福來成",luck:"上吉"},
+  {num:"第25籤",text:"雲山霧鎖路難通\n謀望求財事未逢\n且待時來天運轉\n此時方得見光榮",luck:"中平"},
+  {num:"第26籤",text:"淺灘龍困少風雲\n萬事謀求未得伸\n靜守家中無禍患\n妄求向外必遭屯",luck:"中平"},
+  {num:"第27籤",text:"花開雨打又風吹\n謀望千般事不宜\n守舊安分無災害\n貪圖進取有憂危",luck:"下下"},
+  {num:"第28籤",text:"孤雁飛來過遠灘\n謀為求事有多難\n安身守己隨緣過\n莫惹閒非禍患攤",luck:"下下"},
+  {num:"第29籤",text:"鏡內花開豈是真\n水中明月枉勞神\n千般謀望皆虛幻\n守舊安身免禍侵",luck:"下下"},
+  {num:"第30籤",text:"薄霧輕雲掩月明\n謀求作事未通亨\n待得雲開星月朗\n此時方得事光榮",luck:"中平"},
+  {num:"第31籤",text:"時來運轉福門開\n萬事謀求稱意懷\n貴人相逢多吉慶\n財祿源源入戶來",luck:"上上"},
+  {num:"第32籤",text:"春風得意馬蹄輕\n出入相逢喜事生\n求望謀為皆遂願\n滿門吉慶福綿綿",luck:"上上"},
+  {num:"第33籤",text:"月到中天萬里明\n清光普照福來臨\n求財謀望皆如意\n禍散災消百事寧",luck:"上上"},
+  {num:"第34籤",text:"花開滿院遇春風\n好事重重喜氣濃\n貴人提攜多吉利\n財祿功名兩得通",luck:"上吉"},
+  {num:"第35籤",text:"魚躍龍門喜氣新\n從今脫卻舊時塵\n謀求進取多如意\n祿位財帛日日增",luck:"上上"},
+  {num:"第36籤",text:"雲開霧散日重光\n萬事從新大吉昌\n求財謀望皆稱遂\n滿門吉慶福綿長",luck:"上上"},
+  {num:"第37籤",text:"風浪波濤水面生\n求謀向外事難成\n安守家園方為吉\n切莫貪求惹禍情",luck:"中平"},
+  {num:"第38籤",text:"花遭霜雪減光輝\n萬事謀求未得宜\n守舊靜心無災害\n妄求進取有憂危",luck:"下下"},
+  {num:"第39籤",text:"霧鎖青山路不通\n千般謀望事難逢\n待得天開雲霧散\n方知否極又還通",luck:"中平"},
+  {num:"第40籤",text:"困鳥籠中未得飛\n謀求進取事多違\n安身守分隨緣過\n莫惹閒非禍自歸",luck:"下下"},
+  {num:"第41籤",text:"枯木逢春葉再新\n從今門戶轉光榮\n求財謀望多如意\n禍散災消福祿臻",luck:"上吉"},
+  {num:"第42籤",text:"寶鏡塵埋久不明\n一朝磨洗復光瑩\n貴人相引多吉利\n萬事亨通福祿生",luck:"上吉"},
+  {num:"第43籤",text:"春風送福入門來\n好事相逢喜氣開\n謀望求財皆遂意\n滿門吉慶樂無涯",luck:"上上"},
+  {num:"第44籤",text:"月滿中天照萬家\n清光處處顯光華\n求財謀望多如意\n出入平安福祿加",luck:"上上"},
+  {num:"第45籤",text:"雲遮明月暗朦朧\n謀望求財事未通\n且待時來天運轉\n雲開月現福無窮",luck:"中平"},
+  {num:"第46籤",text:"淺水魚龍未得遊\n千般謀望事多憂\n守舊安身無災患\n貪求向外必遭愁",luck:"下下"},
+  {num:"第47籤",text:"狂風驟雨打花枝\n萬事謀求未合宜\n靜守家園為上策\n妄求進取有凶危",luck:"下下"},
+  {num:"第48籤",text:"孤舟渡海浪滔滔\n求事謀望苦勞勞\n守分安命隨時過\n免教災禍來相遭",luck:"下下"},
+  {num:"第49籤",text:"鏡花水月總虛浮\n謀望千般枉費求\n安分守己無災害\n貪圖妄想惹憂愁",luck:"下下"},
+  {num:"第50籤",text:"黑雲籠日少光輝\n萬事謀求多阻違\n等待雲開天日朗\n此時方得顯神威",luck:"中平"},
+  {num:"第51籤",text:"時運亨通百事昌\n貴人相助福綿長\n求財謀望皆如意\n禍散災消喜滿堂",luck:"上上"},
+  {num:"第52籤",text:"春風化雨潔花開\n好事重重入戶來\n謀望求財多遂意\n功名財祿兩相諧",luck:"上上"},
+  {num:"第53籤",text:"皓月當空萬里輝\n千般謀望盡堪為\n出入平安多吉慶\n財祿源源福祿隨",luck:"上上"},
+  {num:"第54籤",text:"花逢暖日滿園紅\n謀望求財事事通\n貴人相逢多吉慶\n滿門喜氣樂無窮",luck:"上上"},
+  {num:"第55籤",text:"魚化龍騰上碧霄\n從今脫卻舊塵囂\n謀求進取皆如意\n祿位財名步步高",luck:"上上"},
+  {num:"第56籤",text:"雲開見日顯光明\n否極泰來百事成\n求財謀望皆稱遂\n災消禍散福來迎",luck:"上上"},
+  {num:"第57籤",text:"浪起江湖風雨狂\n千般謀望莫輕忙\n安守舊業方為吉\n貪進招災惹禍殃",luck:"中平"},
+  {num:"第58籤",text:"霜雪侵凌花損傷\n謀求作事少輝光\n守舊靜心無災害\n妄取貪求有禍殃",luck:"下下"},
+  {num:"第59籤",text:"霧鎖重山去路迷\n謀望求財事不齊\n待得時來天運轉\n撥雲見日始相宜",luck:"中平"},
+  {num:"第60籤",text:"籠中禽鳥不能飛\n萬事謀求願望違\n守分安命隨緣度\n莫教災禍緊相隨",luck:"下下"}
 ];
 
-// 摇签逻辑
-btnLot.addEventListener('click',function(){
-    const pick = lotLib[Math.floor(Math.random()*lotLib.length)];
-    const time = new Date().toLocaleString('zh-TW');
-    const oneLog = `${time}｜${pick}`;
-    recordArr.unshift(oneLog);
-    if(recordArr.length>10) recordArr.pop();
-    localStorage.setItem('lotRecord',JSON.stringify(recordArr));
-    renderRecord();
-    alert(`求得：${pick}`);
-    // 重置掷筊状态
-    saintCount = 0;
-    jiaoShow.innerText = `擲聖筊（累計 0/${needTotal} 聖筊）`;
-    btnLot.disabled = true;
-});
+// 頁面元素獲取
+const drawBtn = document.getElementById("drawBtn");
+const resetBtn = document.getElementById("resetBtn");
+const lotteryWrap = document.getElementById("lotteryWrap");
+const lotNumEl = document.getElementById("lotNum");
+const lotTextEl = document.getElementById("lotText");
+const luckTagEl = document.getElementById("luckTag");
+const historyListEl = document.getElementById("historyList");
+
+// 吉凶樣式映射
+const luckClassMap = {
+  "上上":"tag-shangshang",
+  "上吉":"tag-shangji",
+  "中平":"tag-zhongping",
+  "下下":"tag-xiaxia"
+};
+
+// 讀取本地歷史紀錄
+let drawHistory = JSON.parse(localStorage.getItem("drawLotHistory")||"[]");
+renderHistory();
+
+// 渲染歷史紀錄（美化版分欄+吉凶標籤）
+function renderHistory(){
+  historyListEl.innerHTML = "";
+  const recentHistory = drawHistory.slice(-5).reverse();
+  if (recentHistory.length === 0) {
+    historyListEl.innerHTML = '<div class="history-item">尚無抽籤紀錄</div>';
+    return;
+  }
+  recentHistory.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    const leftText = document.createElement("span");
+    leftText.textContent = `${item.time}｜${item.num}`;
+    const luckSpan = document.createElement("span");
+    luckSpan.className = "luck";
+    luckSpan.textContent = item.luck;
+    // 動態給歷史吉凶標籤配色
+    if (item.luck === "上上") {
+      luckSpan.style.background = "#f8d060";
+      luckSpan.style.color = "#704200";
+    } else if (item.luck === "上吉") {
+      luckSpan.style.background = "#9ed873";
+      luckSpan.style.color = "#245010";
+    } else if (item.luck === "中平") {
+      luckSpan.style.background = "#94b8d8";
+      luckSpan.style.color = "#1a344b";
+    } else if (item.luck === "下下") {
+      luckSpan.style.background = "#d88989";
+      luckSpan.style.color = "#571212";
+    }
+    div.appendChild(leftText);
+    div.appendChild(luckSpan);
+    historyListEl.appendChild(div);
+  })
+}
+
+// 搖籤動態文字輪播
+const waitTextList = ["搖籤中…","静心祈福中","籤筒晃動中"];
+
+// 抽籤主邏輯
+drawBtn.onclick = function () {
+  drawBtn.disabled = true;
+  let textIdx = 0;
+  drawBtn.innerText = waitTextList[textIdx];
+  const textTimer = setInterval(()=>{
+    textIdx = (textIdx+1)%waitTextList.length;
+    drawBtn.innerText = waitTextList[textIdx];
+  },600);
+
+  setTimeout(()=>{
+    clearInterval(textTimer);
+    const r = Math.floor(Math.random() * lotList.length);
+    const pick = lotList[r];
+
+    lotNumEl.innerText = pick.num;
+    lotTextEl.innerText = pick.text.replaceAll("\n","");
+    luckTagEl.className = `luck-tag ${luckClassMap[pick.luck]}`;
+    luckTagEl.innerText = pick.luck;
+
+    // 存入本地歷史記錄（最多保留10條）
+    const now = new Date();
+    const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+    drawHistory.push({time:timeStr,num:pick.num,luck:pick.luck});
+    if(drawHistory.length>10) drawHistory.shift();
+    localStorage.setItem("drawLotHistory",JSON.stringify(drawHistory));
+    renderHistory();
+
+    lotteryWrap.classList.remove("hide");
+    resetBtn.classList.remove("hide");
+    drawBtn.classList.add("hide");
+    drawBtn.innerText = "抽籤詩";
+    drawBtn.disabled = false;
+  }, 2000);
+};
+
+// 重新抽籤重置邏輯
+resetBtn.onclick = function () {
+  lotteryWrap.classList.add("hide");
+  resetBtn.classList.add("hide");
+  drawBtn.classList.remove("hide");
+};
 </script>
+
 </body>
 </html>
+	
