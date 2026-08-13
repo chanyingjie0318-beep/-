@@ -12,10 +12,10 @@
       font-family: "Noto Sans TC", sans-serif;
     }
 
-       body {
+    body {
       background:
-        linear-gradient(rgba(44, 32, 22, 0.82), rgba(44, 32, 22, 0.82)),
-        url("temple-bg.jpg.png") center top no-repeat;
+        linear-gradient(rgba(44, 32, 22, 0.72), rgba(44, 32, 22, 0.72)),
+        url("temple-bg.jpg.png") center no-repeat;
       background-size: cover;
       background-attachment: fixed;
       color: #f8f2e4;
@@ -29,13 +29,22 @@
       margin-bottom: 24px;
       font-size: 26px;
       color: #ffdd99;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      animation: lanternBreath 3s ease-in-out infinite;
+    }
+    @keyframes lanternBreath {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.9; }
     }
 
     .block {
-      background: #443424;
-      padding: 20px;
-      border-radius: 12px;
+      background: rgba(68, 52, 36, 0.82);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      padding: 24px 20px;
+      border-radius: 16px;
       margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     }
 
     /* 抽籤區塊 */
@@ -46,38 +55,46 @@
     .draw-tip {
       color: #e6d2a8;
       font-size: 16px;
-      margin: 10px 0 18px;
+      margin: 12px 0 22px;
       line-height: 1.6;
     }
 
     .draw-btn {
-      padding: 14px 28px;
+      padding: 14px 32px;
       font-size: 18px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       background: #b88628;
       color: #fff;
       margin: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
 
     .draw-btn:hover {
       background: #d49c2f;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.28);
     }
 
     .reset-btn {
       padding: 12px 24px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       background: #6b5344;
       color: #fff;
       margin: 10px;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
 
     .reset-btn:hover {
       background: #8b6b54;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 12px rgba(0,0,0,0.28);
     }
 
     /* 籤紙樣式，真實紙張感 */
@@ -90,6 +107,11 @@
       margin-top: 20px;
       box-shadow: 0 0 14px #0007;
       position: relative;
+      animation: paperFade 0.4s ease-out;
+    }
+    @keyframes paperFade {
+      from { opacity:0; transform: translateY(10px); }
+      to { opacity:1; transform: translateY(0); }
     }
 
     .lottery-paper::before {
@@ -137,30 +159,35 @@
 
     .footer-area a {
       display: block;
-      padding: 14px;
-      margin: 10px auto;
+      padding: 15px;
+      margin: 12px auto;
       color: white;
       text-decoration: none;
-      border-radius: 10px;
+      border-radius: 12px;
       max-width: 320px;
       font-size: 17px;
-      transition: background 0.2s;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .line-btn {
-      background: #25c455;
+      background: rgba(37, 196, 85, 0.85);
     }
 
     .line-btn:hover {
-      background: #20a84a;
+      background: rgba(32, 168, 74, 0.95);
+      transform: translateY(-2px);
     }
 
     .donate-btn {
-      background: #c0392b;
+      background: rgba(192, 57, 43, 0.85);
     }
 
     .donate-btn:hover {
-      background: #a93226;
+      background: rgba(169, 50, 38, 0.95);
+      transform: translateY(-2px);
     }
   </style>
 </head>
@@ -258,17 +285,25 @@ const lotteryWrap = document.getElementById("lotteryWrap");
 const lotNumEl = document.getElementById("lotNum");
 const lotTextEl = document.getElementById("lotText");
 
-// 抽籤
+// 抽籤（新增搖籤等待儀式感）
 drawBtn.onclick = function () {
-  const r = Math.floor(Math.random() * lotList.length);
-  const pick = lotList[r];
+  drawBtn.innerText = "搖籤中...";
+  drawBtn.disabled = true;
+  // 模擬2秒搖籤過程
+  setTimeout(()=>{
+    const r = Math.floor(Math.random() * lotList.length);
+    const pick = lotList[r];
 
-  lotNumEl.innerText = pick.num;
-  lotTextEl.innerText = pick.text;
+    lotNumEl.innerText = pick.num;
+    lotTextEl.innerText = pick.text;
 
-  lotteryWrap.classList.remove("hide");
-  resetBtn.classList.remove("hide");
-  drawBtn.classList.add("hide");
+    lotteryWrap.classList.remove("hide");
+    resetBtn.classList.remove("hide");
+    drawBtn.classList.add("hide");
+    // 還原按鈕狀態
+    drawBtn.innerText = "抽籤詩";
+    drawBtn.disabled = false;
+  }, 2000);
 };
 
 // 重新抽籤
