@@ -20,14 +20,15 @@
       background-attachment: fixed;
       color: #f8f2e4;
       padding: 24px 16px;
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
+      min-height: 100vh;
     }
 
     h1 {
       text-align: center;
       margin-bottom: 24px;
-      font-size: 26px;
+      font-size: 28px;
       color: #ffdd99;
       text-shadow: 0 1px 3px rgba(0,0,0,0.4);
       animation: lanternBreath 3s ease-in-out infinite;
@@ -71,6 +72,8 @@
       transition: all 0.25s ease;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
+    .draw-btn:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+    .draw-btn:disabled{background:#886a39;cursor:not-allowed;transform:none}
 
     .draw-btn:hover {
       background: #d49c2f;
@@ -90,14 +93,27 @@
       transition: all 0.25s ease;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
     }
-
+    .reset-btn:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
     .reset-btn:hover {
       background: #8b6b54;
       transform: translateY(-2px);
       box-shadow: 0 5px 12px rgba(0,0,0,0.28);
     }
 
-    /* 籤紙樣式，真實紙張感 */
+    /* 吉凶標籤 */
+    .luck-tag{
+      display:inline-block;
+      padding:4px 12px;
+      border-radius:20px;
+      font-size:14px;
+      margin-bottom:12px;
+    }
+    .tag-shangshang{background:#f8d060;color:#704200}
+    .tag-shangji{background:#9ed873;color:#245010}
+    .tag-zhongping{background:#94b8d8;color:#1a344b}
+    .tag-xiaxia{background:#d88989;color:#571212}
+
+    /* 籤紙樣式 傳統豎排 */
     .lottery-paper {
       background: #fff9e8;
       color: #222;
@@ -129,26 +145,44 @@
       font-size: 28px;
       font-weight: bold;
       text-align: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       color: #8b2323;
     }
 
     .lottery-title {
       text-align: center;
       font-size: 18px;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
       color: #5a3e1b;
     }
 
     .lottery-poem {
-      white-space: pre-line;
-      line-height: 1.8;
-      font-size: 16px;
-      text-align: center;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      margin:20px auto;
+      height:220px;
+      letter-spacing:6px;
+      font-size:17px;
+      line-height:2;
     }
 
     .hide {
       display: none;
+    }
+
+    /* 歷史記錄區域 */
+    .history-area{
+      margin-top:16px;
+      padding-top:16px;
+      border-top:1px dashed rgba(255,255,255,0.2)
+    }
+    .history-title{font-size:16px;margin-bottom:10px;color:#e6d2a8}
+    .history-item{
+      font-size:14px;
+      padding:6px 8px;
+      background:rgba(255,255,255,0.08);
+      border-radius:6px;
+      margin:4px 0;
     }
 
     /* 底部連結區 */
@@ -164,13 +198,14 @@
       color: white;
       text-decoration: none;
       border-radius: 12px;
-      max-width: 320px;
+      max-width: 360px;
       font-size: 17px;
       transition: all 0.25s ease;
       box-shadow: 0 3px 8px rgba(0,0,0,0.2);
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
     }
+    .footer-area a:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(0,0,0,0.2)}
 
     .line-btn {
       background: rgba(37, 196, 85, 0.85);
@@ -203,8 +238,14 @@
 
   <div class="lottery-paper hide" id="lotteryWrap">
     <div class="lottery-num" id="lotNum"></div>
+    <div id="luckTag"></div>
     <div class="lottery-title">城隍靈籤</div>
     <div class="lottery-poem" id="lotText"></div>
+  </div>
+
+  <div class="history-area" id="historyBox">
+    <div class="history-title">📜 最近抽籤紀錄</div>
+    <div id="historyList"></div>
   </div>
 </div>
 
@@ -214,68 +255,68 @@
 </div>
 
 <script>
-// 60支城隍靈籤
+// 60支城隍靈籤+吉凶分類
 const lotList = [
-  {num:"第1籤",text:"春來雷震百花開\n萬物光華照上台\n謀望求財皆遂意\n災消禍散福來陪"},
-  {num:"第2籤",text:"雲開月出正分明\n不須進退問前程\n婚姻財祿皆如意\n若得此籤萬事成"},
-  {num:"第3籤",text:"風吹雲霧散青天\n月滿庭前照必然\n好事重重多吉利\n求財謀望喜綿綿"},
-  {num:"第4籤",text:"久困窮途未得時\n今朝得祿始相宜\n從今更改門庭吉\n百事亨通福自隨"},
-  {num:"第5籤",text:"一輪明月照中天\n萬里清光萬事全\n男女相逢多喜慶\n求財謀望福綿綿"},
-  {num:"第6籤",text:"石中藏玉有誰知\n一旦光輝顯大奇\n若得貴人相引薦\n功名財祿兩相宜"},
-  {num:"第7籤",text:"雲霧遮月暗重重\n求事謀望未得通\n且待雲開明月現\n此時方可遇春風"},
-  {num:"第8籤",text:"平地起波風浪驚\n求謀作事未宜行\n安守舊業方為吉\n切莫貪求惹禍生"},
-  {num:"第9籤",text:"花開遭雨打風摧\n萬事謀求未得宜\n守舊安身無禍患\n貪求進取必生危"},
-  {num:"第10籤",text:"鴻雁孤飛落淺灘\n往來求事多阻難\n守分安命隨時過\n切莫貪圖惹禍端"},
-  {num:"第11籤",text:"寶鏡蒙塵未得光\n千般謀望事難彰\n若逢明鏡重磨洗\n萬事從新大吉昌"},
-  {num:"第12籤",text:"困龍淺灘未得時\n靜守待雲起天池\n若得風雲相際會\n此時變化上天池"},
-  {num:"第13籤",text:"春風萬里送歸人\n好事相逢喜氣新\n求財謀望皆如意\n出入平安福祿臻"},
-  {num:"第14籤",text:"滿園桃李正春華\n出入相逢喜事加\n求財謀望多如意\n禍去福來喜到家"},
-  {num:"第15籤",text:"明月清風夜正長\n百花開處滿庭香\n求財謀望皆如意\n百事從心大吉昌"},
-  {num:"第16籤",text:"魚躍春江水暖時\n謀求進取正相宜\n貴人相助多吉利\n財祿功名兩得宜"},
-  {num:"第17籤",text:"雲開霧散見青天\n萬事從新福祿綿\n求財謀望皆稱意\n災消禍散喜安然"},
-  {num:"第18籤",text:"花逢春雨滿園開\n好事重重入戶來\n求望謀為多遂意\n貴人接引上春台"},
-  {num:"第19籤",text:"寒潭魚少水淒清\n謀望求財事不成\n守舊安身方得吉\n妄求進取必遭傾"},
-  {num:"第20籤",text:"風雨連天鎖翠樓\n千般謀望事難酬\n且宜靜守無他事\n莫向東西向外求"},
-  {num:"第21籤",text:"枯木逢春再發芽\n舊時門戶重新華\n從今謀望皆如意\n禍散災消福到家"},
-  {num:"第22籤",text:"寶劍塵埋久未光\n一朝磨洗顯鋒芒\n貴人提攜多吉利\n財祿功名大吉昌"},
-  {num:"第23籤",text:"一輪明月出雲霄\n萬里清光萬事饒\n求財謀望多如意\n出入平安福祿高"},
-  {num:"第24籤",text:"春風送暖百花榮\n好事相逢喜氣生\n謀望求財皆遂意\n貴人相助福來成"},
-  {num:"第25籤",text:"雲山霧鎖路難通\n謀望求財事未逢\n且待時來天運轉\n此時方得見光榮"},
-  {num:"第26籤",text:"淺灘龍困少風雲\n萬事謀求未得伸\n靜守家中無禍患\n妄求向外必遭屯"},
-  {num:"第27籤",text:"花開雨打又風吹\n謀望千般事不宜\n守舊安分無災害\n貪圖進取有憂危"},
-  {num:"第28籤",text:"孤雁飛來過遠灘\n謀為求事有多難\n安身守己隨緣過\n莫惹閒非禍患攤"},
-  {num:"第29籤",text:"鏡內花開豈是真\n水中明月枉勞神\n千般謀望皆虛幻\n守舊安身免禍侵"},
-  {num:"第30籤",text:"薄霧輕雲掩月明\n謀求作事未通亨\n待得雲開星月朗\n此時方得事光榮"},
-  {num:"第31籤",text:"時來運轉福門開\n萬事謀求稱意懷\n貴人相逢多吉慶\n財祿源源入戶來"},
-  {num:"第32籤",text:"春風得意馬蹄輕\n出入相逢喜事生\n求望謀為皆遂願\n滿門吉慶福綿綿"},
-  {num:"第33籤",text:"月到中天萬里明\n清光普照福來臨\n求財謀望皆如意\n禍散災消百事寧"},
-  {num:"第34籤",text:"花開滿院遇春風\n好事重重喜氣濃\n貴人提攜多吉利\n財祿功名兩得通"},
-  {num:"第35籤",text:"魚躍龍門喜氣新\n從今脫卻舊時塵\n謀求進取多如意\n祿位財帛日日增"},
-  {num:"第36籤",text:"雲開霧散日重光\n萬事從新大吉昌\n求財謀望皆稱遂\n滿門吉慶福綿長"},
-  {num:"第37籤",text:"風浪波濤水面生\n求謀向外事難成\n安守家園方為吉\n切莫貪求惹禍情"},
-  {num:"第38籤",text:"花遭霜雪減光輝\n萬事謀求未得宜\n守舊靜心無災害\n妄求進取有憂危"},
-  {num:"第39籤",text:"霧鎖青山路不通\n千般謀望事難逢\n待得天開雲霧散\n方知否極又還通"},
-  {num:"第40籤",text:"困鳥籠中未得飛\n謀求進取事多違\n安身守分隨緣過\n莫惹閒非禍自歸"},
-  {num:"第41籤",text:"枯木逢春葉再新\n從今門戶轉光榮\n求財謀望多如意\n禍散災消福祿臻"},
-  {num:"第42籤",text:"寶鏡塵埋久不明\n一朝磨洗復光瑩\n貴人相引多吉利\n萬事亨通福祿生"},
-  {num:"第43籤",text:"春風送福入門來\n好事相逢喜氣開\n謀望求財皆遂意\n滿門吉慶樂無涯"},
-  {num:"第44籤",text:"月滿中天照萬家\n清光處處顯光華\n求財謀望多如意\n出入平安福祿加"},
-  {num:"第45籤",text:"雲遮明月暗朦朧\n謀望求財事未通\n且待時來天運轉\n雲開月現福無窮"},
-  {num:"第46籤",text:"淺水魚龍未得遊\n千般謀望事多憂\n守舊安身無災患\n貪求向外必遭愁"},
-  {num:"第47籤",text:"狂風驟雨打花枝\n萬事謀求未合宜\n靜守家園為上策\n妄求進取有凶危"},
-  {num:"第48籤",text:"孤舟渡海浪滔滔\n求事謀望苦勞勞\n守分安命隨時過\n免教災禍來相遭"},
-  {num:"第49籤",text:"鏡花水月總虛浮\n謀望千般枉費求\n安分守己無災害\n貪圖妄想惹憂愁"},
-  {num:"第50籤",text:"黑雲籠日少光輝\n萬事謀求多阻違\n等待雲開天日朗\n此時方得顯神威"},
-  {num:"第51籤",text:"時運亨通百事昌\n貴人相助福綿長\n求財謀望皆如意\n禍散災消喜滿堂"},
-  {num:"第52籤",text:"春風化雨潔花開\n好事重重入戶來\n謀望求財多遂意\n功名財祿兩相諧"},
-  {num:"第53籤",text:"皓月當空萬里輝\n千般謀望盡堪為\n出入平安多吉慶\n財祿源源福祿隨"},
-  {num:"第54籤",text:"花逢暖日滿園紅\n謀望求財事事通\n貴人相逢多吉慶\n滿門喜氣樂無窮"},
-  {num:"第55籤",text:"魚化龍騰上碧霄\n從今脫卻舊塵囂\n謀求進取皆如意\n祿位財名步步高"},
-  {num:"第56籤",text:"雲開見日顯光明\n否極泰來百事成\n求財謀望皆稱遂\n災消禍散福來迎"},
-  {num:"第57籤",text:"浪起江湖風雨狂\n千般謀望莫輕忙\n安守舊業方為吉\n貪進招災惹禍殃"},
-  {num:"第58籤",text:"霜雪侵凌花損傷\n謀求作事少輝光\n守舊靜心無災害\n妄取貪求有禍殃"},
-  {num:"第59籤",text:"霧鎖重山去路迷\n謀望求財事不齊\n待得時來天運轉\n撥雲見日始相宜"},
-  {num:"第60籤",text:"籠中禽鳥不能飛\n萬事謀求願望違\n守分安命隨緣度\n莫教災禍緊相隨"}
+  {num:"第1籤",text:"春來雷震百花開\n萬物光華照上台\n謀望求財皆遂意\n災消禍散福來陪",luck:"上上"},
+  {num:"第2籤",text:"雲開月出正分明\n不須進退問前程\n婚姻財祿皆如意\n若得此籤萬事成",luck:"上上"},
+  {num:"第3籤",text:"風吹雲霧散青天\n月滿庭前照必然\n好事重重多吉利\n求財謀望喜綿綿",luck:"上吉"},
+  {num:"第4籤",text:"久困窮途未得時\n今朝得祿始相宜\n從今更改門庭吉\n百事亨通福自隨",luck:"上吉"},
+  {num:"第5籤",text:"一輪明月照中天\n萬里清光萬事全\n男女相逢多喜慶\n求財謀望福綿綿",luck:"上上"},
+  {num:"第6籤",text:"石中藏玉有誰知\n一旦光輝顯大奇\n若得貴人相引薦\n功名財祿兩相宜",luck:"上吉"},
+  {num:"第7籤",text:"雲霧遮月暗重重\n求事謀望未得通\n且待雲開明月現\n此時方可遇春風",luck:"中平"},
+  {num:"第8籤",text:"平地起波風浪驚\n求謀作事未宜行\n安守舊業方為吉\n切莫貪求惹禍生",luck:"中平"},
+  {num:"第9籤",text:"花開遭雨打風摧\n萬事謀求未得宜\n守舊安身無禍患\n貪求進取必生危",luck:"下下"},
+  {num:"第10籤",text:"鴻雁孤飛落淺灘\n往來求事多阻難\n守分安命隨時過\n切莫貪圖惹禍端",luck:"下下"},
+  {num:"第11籤",text:"寶鏡蒙塵未得光\n千般謀望事難彰\n若逢明鏡重磨洗\n萬事從新大吉昌",luck:"中平"},
+  {num:"第12籤",text:"困龍淺灘未得時\n靜守待雲起天池\n若得風雲相際會\n此時變化上天池",luck:"中平"},
+  {num:"第13籤",text:"春風萬里送歸人\n好事相逢喜氣新\n求財謀望皆如意\n出入平安福祿臻",luck:"上吉"},
+  {num:"第14籤",text:"滿園桃李正春華\n出入相逢喜事加\n求財謀望多如意\n禍去福來喜到家",luck:"上吉"},
+  {num:"第15籤",text:"明月清風夜正長\n百花開處滿庭香\n求財謀望皆如意\n百事從心大吉昌",luck:"上上"},
+  {num:"第16籤",text:"魚躍春江水暖時\n謀求進取正相宜\n貴人相助多吉利\n財祿功名兩得宜",luck:"上吉"},
+  {num:"第17籤",text:"雲開霧散見青天\n萬事從新福祿綿\n求財謀望皆稱意\n災消禍散喜安然",luck:"上吉"},
+  {num:"第18籤",text:"花逢春雨滿園開\n好事重重入戶來\n求望謀為多遂意\n貴人接引上春台",luck:"上吉"},
+  {num:"第19籤",text:"寒潭魚少水淒清\n謀望求財事不成\n守舊安身方得吉\n妄求進取必遭傾",luck:"下下"},
+  {num:"第20籤",text:"風雨連天鎖翠樓\n千般謀望事難酬\n且宜靜守無他事\n莫向東西向外求",luck:"下下"},
+  {num:"第21籤",text:"枯木逢春再發芽\n舊時門戶重新華\n從今謀望皆如意\n禍散災消福到家",luck:"上吉"},
+  {num:"第22籤",text:"寶劍塵埋久未光\n一朝磨洗顯鋒芒\n貴人提攜多吉利\n財祿功名大吉昌",luck:"上吉"},
+  {num:"第23籤",text:"一輪明月出雲霄\n萬里清光萬事饒\n求財謀望多如意\n出入平安福祿高",luck:"上上"},
+  {num:"第24籤",text:"春風送暖百花榮\n好事相逢喜氣生\n謀望求財皆遂意\n貴人相助福來成",luck:"上吉"},
+  {num:"第25籤",text:"雲山霧鎖路難通\n謀望求財事未逢\n且待時來天運轉\n此時方得見光榮",luck:"中平"},
+  {num:"第26籤",text:"淺灘龍困少風雲\n萬事謀求未得伸\n靜守家中無禍患\n妄求向外必遭屯",luck:"中平"},
+  {num:"第27籤",text:"花開雨打又風吹\n謀望千般事不宜\n守舊安分無災害\n貪圖進取有憂危",luck:"下下"},
+  {num:"第28籤",text:"孤雁飛來過遠灘\n謀為求事有多難\n安身守己隨緣過\n莫惹閒非禍患攤",luck:"下下"},
+  {num:"第29籤",text:"鏡內花開豈是真\n水中明月枉勞神\n千般謀望皆虛幻\n守舊安身免禍侵",luck:"下下"},
+  {num:"第30籤",text:"薄霧輕雲掩月明\n謀求作事未通亨\n待得雲開星月朗\n此時方得事光榮",luck:"中平"},
+  {num:"第31籤",text:"時來運轉福門開\n萬事謀求稱意懷\n貴人相逢多吉慶\n財祿源源入戶來",luck:"上上"},
+  {num:"第32籤",text:"春風得意馬蹄輕\n出入相逢喜事生\n求望謀為皆遂願\n滿門吉慶福綿綿",luck:"上上"},
+  {num:"第33籤",text:"月到中天萬里明\n清光普照福來臨\n求財謀望皆如意\n禍散災消百事寧",luck:"上上"},
+  {num:"第34籤",text:"花開滿院遇春風\n好事重重喜氣濃\n貴人提攜多吉利\n財祿功名兩得通",luck:"上吉"},
+  {num:"第35籤",text:"魚躍龍門喜氣新\n從今脫卻舊時塵\n謀求進取多如意\n祿位財帛日日增",luck:"上上"},
+  {num:"第36籤",text:"雲開霧散日重光\n萬事從新大吉昌\n求財謀望皆稱遂\n滿門吉慶福綿長",luck:"上上"},
+  {num:"第37籤",text:"風浪波濤水面生\n求謀向外事難成\n安守家園方為吉\n切莫貪求惹禍情",luck:"中平"},
+  {num:"第38籤",text:"花遭霜雪減光輝\n萬事謀求未得宜\n守舊靜心無災害\n妄求進取有憂危",luck:"下下"},
+  {num:"第39籤",text:"霧鎖青山路不通\n千般謀望事難逢\n待得天開雲霧散\n方知否極又還通",luck:"中平"},
+  {num:"第40籤",text:"困鳥籠中未得飛\n謀求進取事多違\n安身守分隨緣過\n莫惹閒非禍自歸",luck:"下下"},
+  {num:"第41籤",text:"枯木逢春葉再新\n從今門戶轉光榮\n求財謀望多如意\n禍散災消福祿臻",luck:"上吉"},
+  {num:"第42籤",text:"寶鏡塵埋久不明\n一朝磨洗復光瑩\n貴人相引多吉利\n萬事亨通福祿生",luck:"上吉"},
+  {num:"第43籤",text:"春風送福入門來\n好事相逢喜氣開\n謀望求財皆遂意\n滿門吉慶樂無涯",luck:"上上"},
+  {num:"第44籤",text:"月滿中天照萬家\n清光處處顯光華\n求財謀望多如意\n出入平安福祿加",luck:"上上"},
+  {num:"第45籤",text:"雲遮明月暗朦朧\n謀望求財事未通\n且待時來天運轉\n雲開月現福無窮",luck:"中平"},
+  {num:"第46籤",text:"淺水魚龍未得遊\n千般謀望事多憂\n守舊安身無災患\n貪求向外必遭愁",luck:"下下"},
+  {num:"第47籤",text:"狂風驟雨打花枝\n萬事謀求未合宜\n靜守家園為上策\n妄求進取有凶危",luck:"下下"},
+  {num:"第48籤",text:"孤舟渡海浪滔滔\n求事謀望苦勞勞\n守分安命隨時過\n免教災禍來相遭",luck:"下下"},
+  {num:"第49籤",text:"鏡花水月總虛浮\n謀望千般枉費求\n安分守己無災害\n貪圖妄想惹憂愁",luck:"下下"},
+  {num:"第50籤",text:"黑雲籠日少光輝\n萬事謀求多阻違\n等待雲開天日朗\n此時方得顯神威",luck:"中平"},
+  {num:"第51籤",text:"時運亨通百事昌\n貴人相助福綿長\n求財謀望皆如意\n禍散災消喜滿堂",luck:"上上"},
+  {num:"第52籤",text:"春風化雨潔花開\n好事重重入戶來\n謀望求財多遂意\n功名財祿兩相諧",luck:"上上"},
+  {num:"第53籤",text:"皓月當空萬里輝\n千般謀望盡堪為\n出入平安多吉慶\n財祿源源福祿隨",luck:"上上"},
+  {num:"第54籤",text:"花逢暖日滿園紅\n謀望求財事事通\n貴人相逢多吉慶\n滿門喜氣樂無窮",luck:"上上"},
+  {num:"第55籤",text:"魚化龍騰上碧霄\n從今脫卻舊塵囂\n謀求進取皆如意\n祿位財名步步高",luck:"上上"},
+  {num:"第56籤",text:"雲開見日顯光明\n否極泰來百事成\n求財謀望皆稱遂\n災消禍散福來迎",luck:"上上"},
+  {num:"第57籤",text:"浪起江湖風雨狂\n千般謀望莫輕忙\n安守舊業方為吉\n貪進招災惹禍殃",luck:"中平"},
+  {num:"第58籤",text:"霜雪侵凌花損傷\n謀求作事少輝光\n守舊靜心無災害\n妄取貪求有禍殃",luck:"下下"},
+  {num:"第59籤",text:"霧鎖重山去路迷\n謀望求財事不齊\n待得時來天運轉\n撥雲見日始相宜",luck:"中平"},
+  {num:"第60籤",text:"籠中禽鳥不能飛\n萬事謀求願望違\n守分安命隨緣度\n莫教災禍緊相隨",luck:"下下"}
 ];
 
 // 頁面元素
@@ -284,18 +325,64 @@ const resetBtn = document.getElementById("resetBtn");
 const lotteryWrap = document.getElementById("lotteryWrap");
 const lotNumEl = document.getElementById("lotNum");
 const lotTextEl = document.getElementById("lotText");
+const luckTagEl = document.getElementById("luckTag");
+const historyListEl = document.getElementById("historyList");
 
-// 抽籤（新增搖籤等待儀式感）
+// 吉凶樣式映射
+const luckClassMap = {
+  "上上":"tag-shangshang",
+  "上吉":"tag-shangji",
+  "中平":"tag-zhongping",
+  "下下":"tag-xiaxia"
+};
+
+// 讀取本地歷史紀錄
+let drawHistory = JSON.parse(localStorage.getItem("drawLotHistory")||"[]");
+renderHistory();
+
+// 渲染歷史紀錄
+function renderHistory(){
+  historyListEl.innerHTML = "";
+  drawHistory.slice(-5).reverse().forEach(item=>{
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerText = `${item.time} | ${item.num}【${item.luck}】`;
+    historyListEl.appendChild(div);
+  })
+}
+
+// 搖籤動態文字輪播
+const waitTextList = ["搖籤中…","静心祈福中","籤筒晃動中"];
+
+// 抽籤功能優化
 drawBtn.onclick = function () {
-  drawBtn.innerText = "搖籤中...";
   drawBtn.disabled = true;
-  // 模擬2秒搖籤過程
+  let textIdx = 0;
+  drawBtn.innerText = waitTextList[textIdx];
+  // 每600ms切換一次等待文字
+  const textTimer = setInterval(()=>{
+    textIdx = (textIdx+1)%waitTextList.length;
+    drawBtn.innerText = waitTextList[textIdx];
+  },600);
+
   setTimeout(()=>{
+    clearInterval(textTimer);
     const r = Math.floor(Math.random() * lotList.length);
     const pick = lotList[r];
 
     lotNumEl.innerText = pick.num;
-    lotTextEl.innerText = pick.text;
+    lotTextEl.innerText = pick.text.replaceAll("\n","");
+    luckTagEl.className = `luck-tag ${luckClassMap[pick.luck]}`;
+    luckTagEl.innerText = pick.luck;
+
+    // 存入本地歷史
+    const now = new Date();
+    const timeStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+    drawHistory.push({time:timeStr,num:pick.num,luck:pick.luck});
+    // 最多保留10條紀錄
+    if(drawHistory.length>10) drawHistory.shift();
+    localStorage.setItem("drawLotHistory",JSON.stringify(drawHistory));
+    renderHistory();
 
     lotteryWrap.classList.remove("hide");
     resetBtn.classList.remove("hide");
